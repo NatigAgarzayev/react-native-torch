@@ -1,37 +1,38 @@
-import * as Brightness from 'expo-brightness';
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import * as Brightness from 'expo-brightness'
+import { CameraView, useCameraPermissions } from 'expo-camera'
+import { useEffect, useState } from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import Svg, { Circle, Path } from 'react-native-svg'
 
 export default function App() {
     const [permission, requestPermission] = useCameraPermissions()
     const [torch, setTorch] = useState(false)
     const [isFront, setIsFront] = useState<boolean>(false)
-    const [systemBrightness, setSystemBrightness] = useState<number | null>(null);
+    const [deviceBrightness, setDeviceBrightness] = useState<number | null>(null)
 
     useEffect(() => {
         (async () => {
             const { status } = await Brightness.requestPermissionsAsync()
-            const brightness = await Brightness.getSystemBrightnessAsync();
+            const brightness = await Brightness.getBrightnessAsync()
+            console.log("system_brightness =", brightness)
             if (status === 'granted') {
-                setSystemBrightness(brightness);
+                setDeviceBrightness(brightness)
             }
-        })();
-    }, []);
+        })()
+    }, [])
 
     useEffect(() => {
         if (isFront) {
-            Brightness.setSystemBrightnessAsync(1)
+            Brightness.setBrightnessAsync(1)
         }
         else {
-            Brightness.setSystemBrightnessAsync(systemBrightness || 0)
+            Brightness.setBrightnessAsync(deviceBrightness || 0.5)
         }
-    }, [isFront]);
+    }, [isFront])
 
 
     if (!permission) {
-        return <View />;
+        return <View />
     }
 
     if (!permission.granted) {
@@ -41,7 +42,7 @@ export default function App() {
                     <Text style={styles.buttonText}>Grant Permission</Text>
                 </Pressable>
             </View>
-        );
+        )
     }
 
 
@@ -76,7 +77,7 @@ export default function App() {
             </View>
 
         </View>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -142,4 +143,4 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#fff',
     }
-});
+})
