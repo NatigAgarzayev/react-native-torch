@@ -10,6 +10,8 @@ export default function App() {
     const [isFront, setIsFront] = useState<boolean>(false)
     const [deviceBrightness, setDeviceBrightness] = useState<number | null>(null)
 
+    const [switchHovered, setSwitchHovered] = useState<boolean>(false)
+
     useEffect(() => {
         (async () => {
             const { status } = await Brightness.requestPermissionsAsync()
@@ -63,13 +65,13 @@ export default function App() {
                     <View style={styles.controls}>
                         <Pressable style={styles.button} onPress={() => setTorch((t) => !t)}>
                             <Text style={styles.buttonText}>
-                                {torch ? 'Turn Off' : 'Turn On'}
+                                {torch ? 'Turned On' : 'Turned Off'}
                             </Text>
                         </Pressable>
                     </View>
             }
             <View style={styles.switchControls}>
-                <Pressable style={styles.switchButton} onPress={() => setIsFront((f) => !f)}>
+                <Pressable style={[styles.switchButton, switchHovered && styles.switchHoveredButton]} onPress={() => setIsFront((f) => !f)} onPressIn={() => setSwitchHovered(true)} onPressOut={() => setSwitchHovered(false)}>
                     <Text style={styles.buttonText}>
                         <Svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={isFront ? "#000" : "#fff"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><Path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" /><Path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5" /><Circle cx="12" cy="12" r="3" /><Path d="m18 22-3-3 3-3" /><Path d="m6 2 3 3-3 3" /></Svg>
                     </Text>
@@ -129,9 +131,14 @@ const styles = StyleSheet.create({
         bottom: 50,
         right: 20,
         zIndex: 10,
-        padding: 10,
     },
     switchButton: {
+        padding: 10,
+        borderRadius: "50%",
+        overflow: "hidden",
+    },
+    switchHoveredButton: {
+        backgroundColor: "#ffffff31"
     },
     headlineTextContainer: {
         position: 'absolute',
